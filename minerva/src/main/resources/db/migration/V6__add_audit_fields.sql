@@ -1,0 +1,8 @@
+ALTER TABLE users
+    ADD COLUMN created_at TIMESTAMP NULL,
+    ADD COLUMN created_by VARCHAR(255) NULL,
+    ADD COLUMN updated_at TIMESTAMP NULL,
+    ADD COLUMN updated_by VARCHAR(255) NULL;
+
+ALTER TABLE lessons
+    ADD COLUMN created_at TIMESTAMP NULL;
