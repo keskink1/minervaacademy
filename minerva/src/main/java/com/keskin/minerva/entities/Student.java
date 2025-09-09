@@ -30,25 +30,21 @@ public class Student extends AppUser {
     private Map<Long, TeacherNote> teacherNotes = new HashMap<>();
 
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-            name = "student_lessons",
-            joinColumns = @JoinColumn(name = "student_id"),
-            inverseJoinColumns = @JoinColumn(name = "lesson_id")
-    )
+    @ManyToMany(mappedBy = "students")
     private Set<Lesson> lessons = new HashSet<>();
 
-    @OneToOne(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
-    private WeeklySchedule weeklySchedule;
 
     public void freezeStudent() {
         setEnabled(false);
     }
 
     public void assignLesson(Lesson lesson) {
-        this.lessons.add(lesson);
-        lesson.getStudents().add(this);
+        if (!lessons.contains(lesson)) {
+            lessons.add(lesson);
+            lesson.getStudents().add(this);
+        }
     }
+
 
     public void removeLesson(Lesson lesson) {
         this.lessons.remove(lesson);
@@ -68,7 +64,7 @@ public class Student extends AppUser {
     }
 
     public int calculateWeeklyHours() {
-        if (weeklySchedule == null || weeklySchedule.getLessons() == null || weeklySchedule.getLessons().isEmpty()) {
+        if (lessons == null || lessons.isEmpty()) {
             return 0;
         }
 

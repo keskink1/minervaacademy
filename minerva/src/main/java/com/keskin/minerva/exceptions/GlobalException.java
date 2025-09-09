@@ -71,4 +71,17 @@ public class GlobalException extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(TimeConflictException.class)
+    public ResponseEntity<ErrorResponseDto> handleTimeConflictException(
+            TimeConflictException exception, WebRequest webRequest) {
+
+        ErrorResponseDto errorResponseDTO = new ErrorResponseDto(
+                webRequest.getDescription(false),
+                HttpStatus.CONFLICT,
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.CONFLICT);
+    }
+
 }

@@ -3,9 +3,11 @@ package com.keskin.minerva.dtos.lessons;
 import com.keskin.minerva.entities.Student;
 import com.keskin.minerva.entities.Teacher;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
@@ -29,4 +31,11 @@ public class CreateLessonRequestDto {
     private Long teacherId;
 
     private Set<Long> studentIds;
+
+    @NotNull
+    private LocalDateTime startTime;
+
+    @NotNull
+    private LocalDateTime endTime;
+
 }

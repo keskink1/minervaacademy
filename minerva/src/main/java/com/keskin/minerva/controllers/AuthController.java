@@ -23,7 +23,7 @@ import java.security.Principal;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping(value = "/auth", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+@RequestMapping(value = "/api/auth", produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
 @Validated
 public class AuthController {
 

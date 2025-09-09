@@ -10,8 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+
 
 @Component
 @RequiredArgsConstructor
@@ -21,6 +20,7 @@ public class DataLoader implements CommandLineRunner {
     private final UserRepository userRepository;
     private final LessonRepository lessonRepository;
     private final PasswordEncoder passwordEncoder;
+
 
     @Override
     public void run(String... args) {

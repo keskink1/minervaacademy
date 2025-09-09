@@ -1,7 +1,5 @@
 package com.keskin.minerva.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,7 +32,7 @@ public class Lesson {
     private String lectureCode;
 
     @ManyToOne
-    @JoinColumn(name = "teacher_id", nullable = false)
+    @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
     @Column(name = "duration")
@@ -46,9 +44,21 @@ public class Lesson {
     @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
 
-    @ManyToMany(mappedBy = "lessons")
+    @ManyToMany
+    @JoinTable(
+            name = "lesson_students",
+            joinColumns = @JoinColumn(name = "lesson_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_id")
+    )
     private Set<Student> students = new HashSet<>();
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    public void addStudent(Student student) {
+        if (!students.contains(student)) {
+            students.add(student);
+            student.getLessons().add(this);
+        }
+    }
 }

@@ -1,14 +1,11 @@
 package com.keskin.minerva.services;
 
-import com.keskin.minerva.dtos.lessons.LessonDto;
 import com.keskin.minerva.dtos.students.StudentDto;
 import com.keskin.minerva.dtos.students.UpdateStudentRequestDto;
-import com.keskin.minerva.entities.Student;
 import com.keskin.minerva.entities.TeacherNote;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public interface IStudentService {
 

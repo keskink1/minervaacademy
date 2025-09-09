@@ -4,12 +4,12 @@ import com.keskin.minerva.dtos.teachers.TeacherDto;
 import com.keskin.minerva.dtos.teachers.TeacherLessonDto;
 import com.keskin.minerva.dtos.teachers.UpdateTeacherRequestDto;
 import com.keskin.minerva.entities.Teacher;
-import com.keskin.minerva.entities.WeeklySchedule;
 import com.keskin.minerva.exceptions.ResourceNotFoundException;
+import com.keskin.minerva.exceptions.TimeConflictException;
 import com.keskin.minerva.mappers.TeacherMapper;
 import com.keskin.minerva.repositories.LessonRepository;
 import com.keskin.minerva.repositories.TeacherRepository;
-import com.keskin.minerva.services.IScheduleService;
+import com.keskin.minerva.services.ILessonService;
 import com.keskin.minerva.services.ITeacherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ public class TeacherServiceImpl implements ITeacherService {
     private final TeacherMapper teacherMapper;
     private final TeacherRepository teacherRepository;
     private final LessonRepository lessonRepository;
-    private final IScheduleService scheduleService;
+    private final ILessonService lessonService;
 
     private Teacher findByTeacherId(Long id) {
         return teacherRepository.findById(id).orElseThrow(() ->
@@ -60,27 +60,27 @@ public class TeacherServiceImpl implements ITeacherService {
     }
 
     @Override
+    @Transactional
     public TeacherDto assignLesson(Long teacherId, Long lessonId) {
         var lesson = lessonRepository.findById(lessonId).orElseThrow(() ->
                 new ResourceNotFoundException("Lesson", "Lesson ID", lessonId.toString()));
 
-        var teacher = findByTeacherId(teacherId);
+        Teacher teacher = findByTeacherId(teacherId);
 
-        if (teacher.getWeeklySchedule() == null) {
-            WeeklySchedule schedule = new WeeklySchedule();
-            schedule.setTeacher(teacher);
-            teacher.setWeeklySchedule(schedule);
-        }
-
-        if(scheduleService.hasTimeConflictForTeacher(teacher, lesson)){
-            throw new IllegalStateException("Teacher already has a class at this time!");
+        if(lessonService.hasTimeConflictForTeacher(teacher, lesson)){
+            throw new TimeConflictException(
+                    "Teacher already has a lesson at this time: " + lesson.getName()
+            );
         }
 
         teacher.assignLesson(lesson);
-        teacherRepository.save(teacher);
+
+        teacherRepository.saveAndFlush(teacher);
+        lessonRepository.saveAndFlush(lesson);
 
         return teacherMapper.entityToDto(teacher);
     }
+
 
     @Override
     public TeacherDto updateTeacherById(UpdateTeacherRequestDto request, Long id) {

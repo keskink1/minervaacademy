@@ -30,7 +30,6 @@ Minerva is a Spring Boot application designed for academies and educational inst
 - Spring Security
 - JWT (JSON Web Tokens)
 - MySQL 8
-- Flyway for database migrations
 - MapStruct for DTO mapping
 - Spring Validation
 - Swagger / OpenAPI (springdoc-openapi)
@@ -47,7 +46,7 @@ Minerva is a Spring Boot application designed for academies and educational inst
 
 ### `pom.xml`
 
-Includes dependencies for Spring Boot, JPA, Validation, Security, MySQL, JWT, MapStruct, Flyway, and Swagger/OpenAPI. Also includes plugins for Lombok and MapStruct annotation processing.
+Includes dependencies for Spring Boot, JPA, Validation, Security, MySQL, JWT, MapStruct and Swagger/OpenAPI. Also includes plugins for Lombok and MapStruct annotation processing.
 
 ### `SecurityConfig.java`
 
@@ -181,7 +180,6 @@ This is an example request body for creating a new student using `CreateStudentR
 ## Database & Migrations
 
 - MySQL is used as the database.
-- Flyway handles versioned migrations.
 - Entities are audited with `@CreatedDate`, `@LastModifiedDate`, `@CreatedBy`, `@LastModifiedBy`.
 - Tables: `users` (with inheritance for students and teachers), `lessons`, `student_lesson`, `teacher_lesson`, etc.
 

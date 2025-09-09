@@ -25,7 +25,7 @@ import java.security.Principal;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping(value = "/users",  produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
+@RequestMapping(value = "/api/users",  produces = MediaType.APPLICATION_JSON_VALUE + ";charset=UTF-8")
 @Validated
 public class UserController {
     private final IUserService userService;

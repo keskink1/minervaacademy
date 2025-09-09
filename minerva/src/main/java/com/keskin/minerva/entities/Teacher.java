@@ -1,6 +1,7 @@
 package com.keskin.minerva.entities;
 
 import com.keskin.minerva.exceptions.ResourceAlreadyExistsException;
+import com.keskin.minerva.exceptions.TimeConflictException;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,9 +25,6 @@ public class Teacher extends AppUser {
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Lesson> lessons = new HashSet<>();
 
-    @OneToOne(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
-    private WeeklySchedule weeklySchedule;
-
 
     public void freezeTeacher() {
         setEnabled(false);
@@ -34,12 +32,15 @@ public class Teacher extends AppUser {
 
     public void assignLesson(Lesson lesson) {
         if (lesson.getTeacher() == null) {
-            this.lessons.add(lesson);
             lesson.setTeacher(this);
+            this.lessons.add(lesson);
         } else {
-            throw new ResourceAlreadyExistsException("Teacher", lesson.toString());
+            throw new TimeConflictException(
+                    "Teacher already has a lesson at this time: " + lesson.getName()
+            );
         }
     }
+
 
     public void removeLesson(Lesson lesson) {
         this.lessons.remove(lesson);
@@ -49,7 +50,7 @@ public class Teacher extends AppUser {
     }
 
     public int calculateWeeklyHours() {
-        if (weeklySchedule == null || weeklySchedule.getLessons() == null || weeklySchedule.getLessons().isEmpty()) {
+        if (lessons == null || lessons.isEmpty()) {
             return 0;
         }
 
@@ -57,6 +58,5 @@ public class Teacher extends AppUser {
                 .mapToInt(Lesson::getDuration)
                 .sum();
     }
-
 
 }

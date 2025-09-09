@@ -1,17 +1,16 @@
 package com.keskin.minerva.services.impl;
 
-import com.keskin.minerva.dtos.lessons.LessonDto;
 import com.keskin.minerva.dtos.students.StudentDto;
 import com.keskin.minerva.dtos.students.UpdateStudentRequestDto;
 import com.keskin.minerva.entities.Student;
 import com.keskin.minerva.entities.TeacherNote;
-import com.keskin.minerva.entities.WeeklySchedule;
 import com.keskin.minerva.exceptions.ResourceNotFoundException;
+import com.keskin.minerva.exceptions.TimeConflictException;
 import com.keskin.minerva.mappers.StudentMapper;
 import com.keskin.minerva.repositories.LessonRepository;
 import com.keskin.minerva.repositories.StudentRepository;
 import com.keskin.minerva.repositories.TeacherRepository;
-import com.keskin.minerva.services.IScheduleService;
+import com.keskin.minerva.services.ILessonService;
 import com.keskin.minerva.services.IStudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,7 +28,7 @@ public class StudentServiceImpl implements IStudentService {
     private final TeacherRepository teacherRepository;
     private final LessonRepository lessonRepository;
     private final StudentMapper studentMapper;
-    private final IScheduleService scheduleService;
+    private final ILessonService lessonService;
 
     private Student findByStudentId(Long id) {
         return studentRepository.findByIdWithDetails(id).orElseThrow(() ->
@@ -62,26 +61,25 @@ public class StudentServiceImpl implements IStudentService {
 
     @Override
     public StudentDto assignLesson(Long studentId, Long lessonId) {
-        var lesson = lessonRepository.findById(lessonId).orElseThrow(() ->
-                new ResourceNotFoundException("Lesson", "Lesson ID", lessonId.toString()));
+        var lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new ResourceNotFoundException("Lesson", "Lesson ID", lessonId.toString()));
 
-        var student = findByStudentId(studentId);
+        Student student = findByStudentId(studentId);
 
-        if (student.getWeeklySchedule() == null) {
-            WeeklySchedule schedule = new WeeklySchedule();
-            schedule.setStudent(student);
-            student.setWeeklySchedule(schedule);
-        }
-
-        if(scheduleService.hasTimeConflictForStudent(student, lesson)){
-            throw new IllegalStateException("Student already has a class at this time!");
+        if (lessonService.hasTimeConflictForStudent(student, lesson)) {
+            throw new TimeConflictException(
+                    "Student already has a lesson at this time: " + lesson.getName()
+            );
         }
 
         student.assignLesson(lesson);
+
         studentRepository.save(student);
+        lessonRepository.save(lesson);
 
         return studentMapper.entityToDto(student);
     }
+
 
     @Override
     public StudentDto updateStudentById(UpdateStudentRequestDto request, Long id) {
@@ -122,7 +120,7 @@ public class StudentServiceImpl implements IStudentService {
         var student = findByStudentId(studentId);
         student.removeTeacherNote(teacherId);
 
-        if(!teacherRepository.existsById(teacherId)){
+        if (!teacherRepository.existsById(teacherId)) {
             throw new ResourceNotFoundException("Teacher", "ID", teacherId.toString());
         }
 

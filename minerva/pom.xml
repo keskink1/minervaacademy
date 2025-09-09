@@ -71,16 +71,6 @@
 			<version>${mapstruct.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.flywaydb</groupId>
-			<artifactId>flyway-core</artifactId>
-			<version>10.15.0</version> <!-- Plugin ile aynı sürüm! -->
-		</dependency>
-		<dependency>
-			<artifactId>flyway-mysql</artifactId>
-			<groupId>org.flywaydb</groupId>
-			<version>10.15.0</version>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-logging</artifactId>
 		</dependency>
@@ -150,15 +140,6 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.flywaydb</groupId>
-				<artifactId>flyway-maven-plugin</artifactId>
-				<version>10.15.0</version>
-				<configuration>
-					<url>jdbc:mysql://localhost:3306/anubis?createDatabaseIfNotExist=true</url>
-					<cleanDisabled>false</cleanDisabled>
 				</configuration>
 			</plugin>
 		</plugins>

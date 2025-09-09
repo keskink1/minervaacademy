@@ -53,14 +53,14 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         // No auth
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/status").permitAll()
 
                         // Authenticated user
-                        .requestMatchers(HttpMethod.POST, "/auth/logout").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/logout").authenticated()
                         .requestMatchers("/auth/me").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/week-hours").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/auth/change-password").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/users/week-hours").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/change-password").authenticated()
 
                         // Student endpoints (admin)
                         .requestMatchers("/api/students/getAll").hasRole("ADMIN")
